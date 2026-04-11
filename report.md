@@ -1,9 +1,9 @@
 # Reporte de Exploracion y Orquestacion: CIS a Esclerosis Multiple
 
 ## Objetivo
-Este reporte resume los hallazgos del analisis exploratorio realizado en [ms_eda_desde_cero.ipynb](d:/Repositorios/proyecto_final_admin_datos/notebooks/ms_eda_desde_cero.ipynb).
+Este reporte resume los hallazgos del analisis exploratorio realizado en [ms_eda.ipynb](/d:/Repositorios/proyecto_final_admin_datos/notebooks/ms_eda.ipynb).
 
-El foco de esta etapa fue entender el dataset, revisar su calidad, detectar variables relevantes o problematicas y documentar como esos hallazgos se reflejaron en [orquestacion.py](d:/Repositorios/proyecto_final_admin_datos/orquestacion.py).
+El foco de esta etapa fue entender el dataset, revisar su calidad, detectar variables relevantes o problematicas y documentar como esos hallazgos se reflejaron en [pipeline.py](/d:/Repositorios/proyecto_final_admin_datos/pipeline.py).
 
 ## Dataset
 - Archivo analizado: `data/conversion_predictors_of_clinically_isolated_syndrome_to_multiple_sclerosis.csv`
@@ -62,8 +62,8 @@ Conclusion:
 - pueden comentarse en el EDA
 - no deberian usarse para modelado
 
-## Transformaciones implementadas en la orquestacion
-Con base en los hallazgos del EDA, el archivo [orquestacion.py](d:/Repositorios/proyecto_final_admin_datos/orquestacion.py) ya implementa estas decisiones:
+## Transformaciones implementadas en el pipeline
+Con base en los hallazgos del EDA, el archivo [pipeline.py](/d:/Repositorios/proyecto_final_admin_datos/pipeline.py) ya implementa estas decisiones:
 
 - lectura del CSV y carga cruda en `cis_raw`
 - normalizacion de tipos numericos
@@ -75,7 +75,7 @@ Con base en los hallazgos del EDA, el archivo [orquestacion.py](d:/Repositorios/
 - creacion de features derivadas de MRI
 - creacion de features derivadas de potenciales evocados
 - creacion de `age_group` con one-hot encoding
-- carga final en `cis_model_ready`
+- carga final en `cis_model`
 
 ## Feature engineering aplicado / propuesto
 Las variables nuevas identificadas como mas utiles, y ya contempladas en la orquestacion, son:
@@ -88,6 +88,13 @@ Las variables nuevas identificadas como mas utiles, y ya contempladas en la orqu
 
 Estas variables resumen mejor la informacion clinica sin complicar demasiado el pipeline.
 
+En la version actual del pipeline, las columnas derivadas de `age_group` quedan con nombres compatibles para modelado:
+
+- `age_group_24_or_less`
+- `age_group_25_to_34`
+- `age_group_35_to_44`
+- `age_group_45_or_more`
+
 ## Decisiones metodologicas
 Con base en este EDA y en la orquestacion actual, las decisiones principales son:
 
@@ -99,4 +106,4 @@ Con base en este EDA y en la orquestacion actual, las decisiones principales son
 - crear features simples de MRI, potenciales evocados y edad
 
 ## Cierre
-Este trabajo permitio entender el dataset, identificar problemas de calidad, detectar leakage y traducir esos hallazgos en un pipeline de orquestacion que ya deja una coleccion `cis_model_ready` preparada para etapas posteriores de modelado.
+Este trabajo permitio entender el dataset, identificar problemas de calidad, detectar leakage y traducir esos hallazgos en un pipeline que deja una coleccion `cis_model` preparada para etapas posteriores de modelado.

@@ -187,7 +187,7 @@ def transformar_y_cargar() -> int:
             df["age_group"] = pd.cut(
                 df["Age"],
                 bins=[0, 24, 34, 44, 120],
-                labels=["<=24", "25-34", "35-44", "45+"],
+                labels=["24_or_less", "25_to_34", "35_to_44", "45_or_more"],
                 include_lowest=True
             )
             df["age_group"] = df["age_group"].astype("object").fillna("Missing")
