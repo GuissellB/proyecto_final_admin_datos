@@ -163,26 +163,7 @@ def transformar_y_cargar() -> int:
 
         # ── FEATURE ENGINEERING ───────────────────────
 
-        # 7. Conteo de lesiones MRI
-        cols_mri = [c for c in
-                    ["Periventricular_MRI", "Cortical_MRI",
-                     "Infratentorial_MRI", "Spinal_Cord_MRI"]
-                    if c in df.columns]
-        if cols_mri:
-            df["mri_lesion_count"]   = df[cols_mri].sum(axis=1)
-            df["has_any_mri_lesion"] = (df["mri_lesion_count"] > 0).astype(int)
-            print(f"[OK] Features MRI creadas: mri_lesion_count, has_any_mri_lesion")
-
-        # 8. Conteo de pruebas evocadas positivas
-        cols_evocados = [c for c in
-                         ["LLSSEP", "ULSSEP", "VEP", "BAEP"]
-                         if c in df.columns]
-        if cols_evocados:
-            df["evoked_positive_count"]   = df[cols_evocados].sum(axis=1)
-            df["has_any_evoked_positive"] = (df["evoked_positive_count"] > 0).astype(int)
-            print(f"[OK] Features evocados creadas: evoked_positive_count, has_any_evoked_positive")
-
-        # 9. Grupos de edad con one-hot encoding
+        # 7. Grupos de edad con one-hot encoding
         if "Age" in df.columns:
             df["age_group"] = pd.cut(
                 df["Age"],

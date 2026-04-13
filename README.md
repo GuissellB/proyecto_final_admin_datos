@@ -16,7 +16,7 @@ Durante la transformacion se aplican tareas como:
 - eliminacion de la columna `Unnamed: 0`
 - exclusion de `Initial_EDSS` y `Final_EDSS` por leakage
 - imputacion de valores faltantes
-- creacion de variables derivadas a partir de MRI, potenciales evocados y grupos de edad
+- creacion de variables derivadas de grupos de edad
 
 ## Dataset
 

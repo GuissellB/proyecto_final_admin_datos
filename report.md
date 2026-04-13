@@ -72,21 +72,15 @@ Con base en los hallazgos del EDA, el archivo [pipeline.py](/d:/Repositorios/pro
 - exclusion de `Initial_EDSS` y `Final_EDSS` por leakage
 - imputacion de `Schooling` con mediana
 - imputacion de `Initial_Symptom` con `-1`
-- creacion de features derivadas de MRI
-- creacion de features derivadas de potenciales evocados
 - creacion de `age_group` con one-hot encoding
 - carga final en `cis_model`
 
 ## Feature engineering aplicado / propuesto
-Las variables nuevas identificadas como mas utiles, y ya contempladas en la orquestacion, son:
+La variable derivada que se mantiene en el pipeline es:
 
-- `mri_lesion_count`
-- `has_any_mri_lesion`
-- `evoked_positive_count`
-- `has_any_evoked_positive`
 - `age_group`
 
-Estas variables resumen mejor la informacion clinica sin complicar demasiado el pipeline.
+Esta variable resume la edad en grupos y se expande con one-hot encoding para facilitar etapas posteriores de modelado.
 
 En la version actual del pipeline, las columnas derivadas de `age_group` quedan con nombres compatibles para modelado:
 
@@ -103,7 +97,7 @@ Con base en este EDA y en la orquestacion actual, las decisiones principales son
 - excluir `Initial_EDSS` y `Final_EDSS` del dataset de modelo
 - imputar `Schooling` e `Initial_Symptom` si se requiere
 - mantener por ahora la codificacion numerica original, incluyendo `unknown`
-- crear features simples de MRI, potenciales evocados y edad
+- crear features simples de edad
 
 ## Cierre
 Este trabajo permitio entender el dataset, identificar problemas de calidad, detectar leakage y traducir esos hallazgos en un pipeline que deja una coleccion `cis_model` preparada para etapas posteriores de modelado.
