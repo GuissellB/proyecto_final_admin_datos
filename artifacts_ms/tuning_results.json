@@ -1,0 +1,11 @@
+{
+  "XGBoost": {
+    "best_params": {
+      "learning_rate": 0.03,
+      "max_depth": 6,
+      "n_estimators": 200,
+      "subsample": 0.8
+    },
+    "best_score": 0.9017753623188405
+  }
+}

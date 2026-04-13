@@ -1,0 +1,20 @@
+{
+  "best_model_name": "XGBoost",
+  "metrics": {
+    "Accuracy": 0.8727272727272727,
+    "Precision": 0.875,
+    "Recall": 0.84,
+    "F1": 0.8571428571428571,
+    "ConfusionMatrix": [
+      [
+        27,
+        3
+      ],
+      [
+        4,
+        21
+      ]
+    ],
+    "ROC_AUC": 0.9466666666666665
+  }
+}
