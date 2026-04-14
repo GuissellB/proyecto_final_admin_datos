@@ -3,6 +3,12 @@ numpy
 matplotlib
 seaborn
 scikit-learn
+imbalanced-learn
+joblib
 jupyter
 pymongo
 prefect
+plotly
+streamlit
+xgboost
+lightgbm

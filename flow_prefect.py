@@ -1,6 +1,6 @@
 from prefect import flow, task
 import subprocess
-import sys   # 👈 arriba, fuera de la función
+import sys 
 
 @task
 def run_pipeline():

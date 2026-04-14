@@ -1,11 +1,10 @@
 {
-  "XGBoost": {
+  "RandomForest": {
     "best_params": {
-      "learning_rate": 0.03,
-      "max_depth": 6,
-      "n_estimators": 200,
-      "subsample": 0.8
+      "max_depth": null,
+      "min_samples_split": 2,
+      "n_estimators": 200
     },
-    "best_score": 0.9017753623188405
+    "best_score": 0.8791123188405796
   }
 }

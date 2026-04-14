@@ -28,7 +28,6 @@ except Exception:
     LIGHTGBM_AVAILABLE = False
 
 from ml_toolkit import (
-    EDAExplorer,
     DataPreparer,
     SupervisedRunner,
     ModelEvaluator,
@@ -41,30 +40,10 @@ warnings.filterwarnings("ignore")
 # =========================================================
 TARGET_COL = "group"          # <-- CAMBIA ESTO si tu target tiene otro nombre
 POS_LABEL = 1                # Clase positiva: conversión
-DROP_COLS = ["_id", "id", "ID", "patient_id"]   # Ajusta según tu colección
-EXCLUDE_COLS = ["initial_edss", "final_edss"]
 TRAIN_SIZE = 0.80
 RANDOM_STATE = 42
 N_SPLITS = 5
 OUTPUT_DIR = Path("artifacts_ms")
-
-# Mapeo del target.
-# Ajusta según cómo venga tu variable objetivo en Mongo.
-TARGET_MAP = {
-    1: 1,
-    2: 0,
-    "1": 1,
-    "2": 0,
-    "CDMS": 1,
-    "Non-CDMS": 0,
-    "non-CDMS": 0,
-    "conversion": 1,
-    "no_conversion": 0,
-    "yes": 1,
-    "no": 0,
-    "Yes": 1,
-    "No": 0,
-}
 
 # Scoring principal para escoger mejor modelo
 MAIN_SCORE = "ROC_AUC_Pos"
@@ -110,66 +89,10 @@ def load_data_from_mongo() -> pd.DataFrame:
         client.close()
 
 
-def validate_loaded_data(df: pd.DataFrame) -> None:
-    print("\n=== VALIDACIÓN BÁSICA ===")
-    print("Shape:", df.shape)
-    print("\nColumnas:")
-    print(df.columns.tolist())
-    print("\nTipos:")
-    print(df.dtypes)
-    print("\nNulos por columna:")
-    print(df.isna().sum())
-
-
 def preprocess_dataframe(df: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
     df = df.copy()
-
-    # Normaliza nombres
-    eda = EDAExplorer.from_df(df)
-    eda.normalizar_columnas()
-    df = eda.df
-
-    # Eliminar columnas que no deben modelarse o que el usuario pidió excluir
-    cols_to_drop = DROP_COLS + EXCLUDE_COLS
-    drop_existing = [col for col in cols_to_drop if col in df.columns]
-    if drop_existing:
-        df = df.drop(columns=drop_existing)
-
-    if TARGET_COL not in df.columns:
-        raise ValueError(
-            f"No se encontró la columna objetivo '{TARGET_COL}'. "
-            f"Columnas disponibles: {df.columns.tolist()}"
-        )
-
-    # Mapear target a binario
-    df[TARGET_COL] = df[TARGET_COL].map(lambda x: TARGET_MAP.get(x, x))
-
-    # Validación del target
-    target_unique = pd.Series(df[TARGET_COL]).dropna().unique().tolist()
-    if not set(target_unique).issubset({0, 1}):
-        raise ValueError(
-            f"El target '{TARGET_COL}' no quedó binario. Valores encontrados: {target_unique}"
-        )
-
-    # No crear variables adicionales: se conserva exactamente la estructura original del dataset
-    df_model = df.copy()
-
-    # Eliminar filas con target nulo
-    df_model = df_model.dropna(subset=[TARGET_COL]).reset_index(drop=True)
-
-    # Convertir a numérico todas las features del modelo
-    feature_cols = [c for c in df_model.columns if c != TARGET_COL]
-    for col in feature_cols:
-        df_model[col] = pd.to_numeric(df_model[col], errors="coerce")
-
-    # El target también debe quedar numérico
-    df_model[TARGET_COL] = pd.to_numeric(df_model[TARGET_COL], errors="coerce")
-
-    # Protección mínima contra nulos remanentes
-    df_model = df_model.dropna().reset_index(drop=True)
-
-    final_features = [c for c in df_model.columns if c != TARGET_COL]
-    return df_model, final_features
+    feature_cols = [c for c in df.columns if c != TARGET_COL]
+    return df, feature_cols
 
 
 def build_models() -> dict:
@@ -499,7 +422,6 @@ def save_artifacts(
 def main():
     # 1) Cargar datos
     df_raw = load_data_from_mongo()
-    validate_loaded_data(df_raw)
 
     # 2) Preprocesamiento
     df_model, feature_cols = preprocess_dataframe(df_raw)

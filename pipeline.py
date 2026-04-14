@@ -153,6 +153,11 @@ def transformar_y_cargar() -> int:
             df["Initial_Symptom"] = df["Initial_Symptom"].fillna(-1)
             print(f"[OK] Initial_Symptom: {nulos} nulos imputados con -1")
 
+        # 7. Estandarizar target binario para modelado
+        if "group" in df.columns:
+            df["group"] = df["group"].replace({1: 1, 2: 0})
+            print("[OK] Target 'group' transformado a binario 0/1")
+
         # Reporte de nulos restantes
         nulos_restantes = df.isnull().sum()
         nulos_restantes = nulos_restantes[nulos_restantes > 0]
@@ -163,7 +168,7 @@ def transformar_y_cargar() -> int:
 
         # ── FEATURE ENGINEERING ───────────────────────
 
-        # 7. Grupos de edad con one-hot encoding
+        # 8. Grupos de edad con one-hot encoding
         if "Age" in df.columns:
             df["age_group"] = pd.cut(
                 df["Age"],

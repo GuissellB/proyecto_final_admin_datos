@@ -12,8 +12,8 @@ import plotly.graph_objects as go
 import streamlit as st
 from pymongo import MongoClient
 
-APP_TITLE = "CIS to Multiple Sclerosis Conversion Prediction"
-APP_SUBTITLE = "Clinical machine learning analytics and prediction support"
+APP_TITLE = "Predicción de Conversión de CIS a Esclerosis Múltiple"
+APP_SUBTITLE = "Analítica clínica con machine learning y apoyo a la predicción"
 ARTIFACTS_DIR = Path("artifacts_ms")
 TARGET_COL = "group"
 DROP_COLS = ["_id", "id", "ID", "patient_id"]
@@ -27,115 +27,116 @@ TARGET_MAP = {
     True: 1, False: 0,
 }
 NAV_ITEMS = [
-    "Overview",
-    "Dataset",
-    "Model Performance",
-    "Explainability",
-    "Patient Prediction",
-    "Insights",
+    "Resumen",
+    "Datos",
+    "Rendimiento del Modelo",
+    "Explicabilidad",
+    "Predicción del Paciente",
+    "Hallazgos",
 ]
 
 FIELD_SPECS = {
     "age": {
         "label": "Age (years)",
+        "label": "Edad (años)",
         "type": "int_range",
         "min_value": 0,
         "max_value": 120,
         "default": 30,
-        "help": "Allowed range: 0 to 120 years.",
+        "help": "Rango permitido: 0 a 120 años.",
     },
     "schooling": {
-        "label": "Schooling (years)",
+        "label": "Escolaridad (años)",
         "type": "int_range",
         "min_value": 0,
         "max_value": 40,
         "default": 12,
     },
     "gender": {
-        "label": "Gender",
+        "label": "Sexo",
         "type": "coded_select",
-        "options": {1: "Male", 2: "Female"},
+        "options": {1: "Masculino", 2: "Femenino"},
     },
     "breastfeeding": {
-        "label": "Breastfeeding",
+        "label": "Lactancia materna",
         "type": "coded_select",
-        "options": {1: "Yes", 2: "No", 3: "Unknown"},
+        "options": {1: "Sí", 2: "No", 3: "Desconocido"},
     },
     "varicella": {
         "label": "Varicella",
         "type": "coded_select",
-        "options": {1: "Positive", 2: "Negative", 3: "Unknown"},
+        "options": {1: "Positivo", 2: "Negativo", 3: "Desconocido"},
     },
     "initial_symptoms": {
-        "label": "Initial Symptoms",
+        "label": "Síntomas iniciales",
         "type": "coded_select",
         "options": {
             1: "Visual",
-            2: "Sensory",
+            2: "Sensitivo",
             3: "Motor",
-            4: "Other",
-            5: "Visual and sensory",
-            6: "Visual and motor",
-            7: "Visual and other",
-            8: "Sensory and motor",
-            9: "Sensory and other",
-            10: "Motor and other",
-            11: "Visual, sensory and motor",
-            12: "Visual, sensory and other",
-            13: "Visual, motor and other",
-            14: "Sensory, motor and other",
-            15: "Visual, sensory, motor and other",
+            4: "Otro",
+            5: "Visual y sensitivo",
+            6: "Visual y motor",
+            7: "Visual y otro",
+            8: "Sensitivo y motor",
+            9: "Sensitivo y otro",
+            10: "Motor y otro",
+            11: "Visual, sensitivo y motor",
+            12: "Visual, sensitivo y otro",
+            13: "Visual, motor y otro",
+            14: "Sensitivo, motor y otro",
+            15: "Visual, sensitivo, motor y otro",
         },
     },
     "mono_or_polysymptomatic": {
-        "label": "Mono / Polysymptomatic",
+        "label": "Mono / Polisintomático",
         "type": "coded_select",
-        "options": {1: "Monosymptomatic", 2: "Polysymptomatic", 3: "Unknown"},
+        "options": {1: "Monosintomático", 2: "Polisintomático", 3: "Desconocido"},
     },
     "oligoclonal_bands": {
-        "label": "Oligoclonal Bands",
+        "label": "Bandas oligoclonales",
         "type": "coded_select",
-        "options": {0: "Negative", 1: "Positive", 2: "Unknown"},
+        "options": {0: "Negativo", 1: "Positivo", 2: "Desconocido"},
     },
     "llssep": {
         "label": "LLSSEP",
         "type": "coded_select",
-        "options": {0: "Negative", 1: "Positive"},
+        "options": {0: "Negativo", 1: "Positivo"},
     },
     "ulssep": {
         "label": "ULSSEP",
         "type": "coded_select",
-        "options": {0: "Negative", 1: "Positive"},
+        "options": {0: "Negativo", 1: "Positivo"},
     },
     "vep": {
         "label": "VEP",
         "type": "coded_select",
-        "options": {0: "Negative", 1: "Positive"},
+        "options": {0: "Negativo", 1: "Positivo"},
     },
     "baep": {
         "label": "BAEP",
         "type": "coded_select",
-        "options": {0: "Negative", 1: "Positive"},
+        "options": {0: "Negativo", 1: "Positivo"},
     },
     "periventricular_mri": {
         "label": "Periventricular MRI",
         "type": "coded_select",
-        "options": {0: "Negative", 1: "Positive"},
+        "options": {0: "Negativo", 1: "Positivo"},
     },
     "cortical_mri": {
         "label": "Cortical MRI",
         "type": "coded_select",
-        "options": {0: "Negative", 1: "Positive"},
+        "options": {0: "Negativo", 1: "Positivo"},
     },
     "infratentorial_mri": {
         "label": "Infratentorial MRI",
         "type": "coded_select",
-        "options": {0: "Negative", 1: "Positive"},
+        "options": {0: "Negativo", 1: "Positivo"},
     },
     "spinal_cord_mri": {
-        "label": "Spinal Cord MRI",
+        "label": "MRI de médula espinal",
         "type": "coded_select",
-        "options": {0: "Negative", 1: "Positive"},
+        "options": {0: "Negativo", 1: "Positivo"},
     },
 }
 
@@ -416,7 +417,7 @@ def metric_col(metrics_df: pd.DataFrame, candidates: list[str]) -> str | None:
 
 def friendly_model_table(metrics_df: pd.DataFrame) -> pd.DataFrame:
     if metrics_df.empty:
-        return pd.DataFrame(columns=["Model", "Accuracy", "Precision", "Recall", "F1", "ROC-AUC"])
+        return pd.DataFrame(columns=["Modelo", "Accuracy", "Precision", "Recall", "F1", "ROC-AUC"])
 
     model_col = "model" if "model" in metrics_df.columns else metrics_df.columns[0]
     acc = metric_col(metrics_df, ["cv_Accuracy", "holdout_Accuracy", "Accuracy"])
@@ -426,7 +427,7 @@ def friendly_model_table(metrics_df: pd.DataFrame) -> pd.DataFrame:
     auc = metric_col(metrics_df, ["cv_ROC_AUC_Pos", "holdout_ROC_AUC_Pos", "ROC_AUC", "ROC_AUC_Pos"])
 
     out = pd.DataFrame({
-        "Model": metrics_df[model_col].astype(str),
+        "Modelo": metrics_df[model_col].astype(str),
         "Accuracy": pd.to_numeric(metrics_df[acc], errors="coerce") if acc else np.nan,
         "Precision": pd.to_numeric(metrics_df[prec], errors="coerce") if prec else np.nan,
         "Recall": pd.to_numeric(metrics_df[rec], errors="coerce") if rec else np.nan,
@@ -452,7 +453,7 @@ def build_kpis(raw_df: pd.DataFrame, model_table: pd.DataFrame, best_metrics: di
     best_recall = None
     if not model_table.empty:
         auc_idx = model_table["ROC-AUC"].astype(float).idxmax()
-        best_model = model_table.loc[auc_idx, "Model"]
+        best_model = model_table.loc[auc_idx, "Modelo"]
         best_auc = float(model_table.loc[auc_idx, "ROC-AUC"])
         best_recall = float(model_table["Recall"].max())
 
@@ -515,10 +516,10 @@ def top_predictor_names(fi_df: pd.DataFrame, n: int = 3) -> list[str]:
 
 def risk_label(prob: float) -> tuple[str, str]:
     if prob >= 0.70:
-        return "High Risk", "high"
+        return "Riesgo alto", "high"
     if prob >= 0.40:
-        return "Medium Risk", "medium"
-    return "Low Risk", "low"
+        return "Riesgo medio", "medium"
+    return "Riesgo bajo", "low"
 
 
 CUSTOM_CSS = """
@@ -838,8 +839,8 @@ kpis = build_kpis(raw_df, model_table, best_metrics)
 feature_categories = infer_feature_categories(raw_df)
 
 with st.sidebar:
-    st.markdown('<div class="sidebar-brand"><div class="brand-title">MS Predictor</div><div class="brand-sub">Clinical ML Analytics</div></div>', unsafe_allow_html=True)
-    page = st.radio("Navigation", NAV_ITEMS, label_visibility="collapsed")
+    st.markdown('<div class="sidebar-brand"><div class="brand-title">MS Predictor</div><div class="brand-sub">Analítica clínica con ML</div></div>', unsafe_allow_html=True)
+    page = st.radio("Navegación", NAV_ITEMS, label_visibility="collapsed")
 
 st.markdown(
     f'''<div class="header-wrap"><div class="header-row"><div><div class="header-title">{APP_TITLE}</div><div class="header-sub">{APP_SUBTITLE}</div></div></div></div>''',
@@ -847,14 +848,14 @@ st.markdown(
 )
 
 def render_overview() -> None:
-    st.markdown('<div class="section-title">Overview</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">Resumen</div>', unsafe_allow_html=True)
     card_specs = [
-        ("Total Patients", kpis["total_patients"], f'{kpis["total_patients"]} records available' if kpis["total_patients"] else 'No dataset loaded', "👥", "icon-blue"),
-        ("Conversion Cases", kpis["conversion_cases"], f'{(100*kpis["conversion_cases"]/kpis["total_patients"]):.1f}% conversion rate' if kpis["total_patients"] else 'Conversion class', "↗", "icon-orange"),
-        ("Non-Conversion Cases", kpis["non_conversion_cases"], f'{(100*kpis["non_conversion_cases"]/kpis["total_patients"]):.1f}% stable CIS' if kpis["total_patients"] else 'Stable class', "↘", "icon-teal"),
-        ("Best ROC-AUC", f'{kpis["best_roc_auc"]:.2f}' if kpis["best_roc_auc"] is not None else "-", f'{kpis["best_model"] or "Best model"} performance', "🏅", "icon-cyan"),
-        ("Best Recall", f'{kpis["best_recall"]:.2f}' if kpis["best_recall"] is not None else "-", 'Minimizing false negatives', "∿", "icon-blue"),
-        ("Best Model", str(kpis["best_model"] or "-").replace("_", " "), 'Highest overall metrics', "🧠", "icon-orange"),
+        ("Total de pacientes", kpis["total_patients"], f'{kpis["total_patients"]} registros disponibles' if kpis["total_patients"] else 'No hay dataset cargado', "👥", "icon-blue"),
+        ("Casos con conversión", kpis["conversion_cases"], f'{(100*kpis["conversion_cases"]/kpis["total_patients"]):.1f}% de tasa de conversión' if kpis["total_patients"] else 'Clase de conversión', "↗", "icon-orange"),
+        ("Casos sin conversión", kpis["non_conversion_cases"], f'{(100*kpis["non_conversion_cases"]/kpis["total_patients"]):.1f}% CIS estable' if kpis["total_patients"] else 'Clase estable', "↘", "icon-teal"),
+        ("Mejor ROC-AUC", f'{kpis["best_roc_auc"]:.2f}' if kpis["best_roc_auc"] is not None else "-", f'Rendimiento de {kpis["best_model"] or "mejor modelo"}', "🏅", "icon-cyan"),
+        ("Mejor Recall", f'{kpis["best_recall"]:.2f}' if kpis["best_recall"] is not None else "-", 'Minimizando falsos negativos', "∿", "icon-blue"),
+        ("Mejor modelo", str(kpis["best_model"] or "-").replace("_", " "), 'Mayor rendimiento general', "🧠", "icon-orange"),
     ]
 
     for row_start in (0, 3):
@@ -870,26 +871,26 @@ def render_overview() -> None:
 
 
 def render_dataset() -> None:
-    st.markdown('<div class="section-title">Dataset Overview</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">Resumen del Dataset</div>', unsafe_allow_html=True)
     left, right = st.columns([1.05, 1.1], gap="large")
 
     with left:
-        st.markdown('<div class="card"><div class="subcard-title">Class Distribution</div>', unsafe_allow_html=True)
+        st.markdown('<div class="card"><div class="subcard-title">Distribución de clases</div>', unsafe_allow_html=True)
         if not raw_df.empty and TARGET_COL in raw_df.columns:
             y = map_target(raw_df[TARGET_COL])
             counts = pd.DataFrame({
-                "Class": ["Non-Conversion", "Conversion"],
+                "Clase": ["Sin conversión", "Conversión"],
                 "value": [int((y == 0).sum()), int((y == 1).sum())],
             })
             fig = go.Figure()
-            fig.add_bar(x=counts["Class"], y=counts["value"], marker_color=["#23b6ab", "#082b4c"], width=0.55)
+            fig.add_bar(x=counts["Clase"], y=counts["value"], marker_color=["#23b6ab", "#082b4c"], width=0.55)
             fig.update_layout(
                 height=340, margin=dict(l=30, r=15, t=10, b=10), plot_bgcolor="white", paper_bgcolor="white",
                 yaxis=dict(gridcolor="#e9eef2", zeroline=False), xaxis=dict(showgrid=False), showlegend=False,
             )
             st.plotly_chart(fig, use_container_width=True)
         else:
-            st.info("No class distribution available yet.")
+            st.info("Aún no hay distribución de clases disponible.")
         st.markdown('</div>', unsafe_allow_html=True)
 
     with right:
@@ -915,7 +916,7 @@ def render_dataset() -> None:
 
             html = f"""
     <div class="features-wrap">
-        <div class="subcard-title">Feature Categories</div>
+        <div class="subcard-title">Categorías de variables</div>
         {''.join(blocks)}
     </div>
     """
@@ -924,65 +925,65 @@ def render_dataset() -> None:
             st.markdown(
                 """
     <div class="features-wrap">
-        <div class="subcard-title">Feature Categories</div>
-        <div class="features-list">Feature categories will appear once the dataset is loaded.</div>
+        <div class="subcard-title">Categorías de variables</div>
+        <div class="features-list">Las categorías de variables aparecerán cuando se cargue el dataset.</div>
     </div>
     """,
                 unsafe_allow_html=True,
             )
 
-    st.markdown('<div class="card"><div class="subcard-title">Sample Patient Data</div>', unsafe_allow_html=True)
+    st.markdown('<div class="card"><div class="subcard-title">Muestra de datos de pacientes</div>', unsafe_allow_html=True)
     if not raw_df.empty:
         preview = raw_df.head(8).copy()
         if TARGET_COL in preview.columns:
-            preview[TARGET_COL] = map_target(preview[TARGET_COL]).map({1: "Yes", 0: "No"}).fillna(preview[TARGET_COL])
+            preview[TARGET_COL] = map_target(preview[TARGET_COL]).map({1: "Sí", 0: "No"}).fillna(preview[TARGET_COL])
         st.dataframe(preview, use_container_width=True, hide_index=True)
     else:
-        st.info("No dataset preview available.")
+        st.info("No hay vista previa del dataset disponible.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 
 
 def render_model_performance() -> None:
-    st.markdown('<div class="section-title">Model Performance Comparison</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">Comparación de rendimiento de modelos</div>', unsafe_allow_html=True)
     if not model_table.empty:
         best_idx = model_table["ROC-AUC"].astype(float).idxmax()
         styled_rows = []
         for idx, row in model_table.iterrows():
-            best_chip = ' <span class="best-chip">Best</span>' if idx == best_idx else ''
+            best_chip = ' <span class="best-chip">Mejor</span>' if idx == best_idx else ''
             styled_rows.append(
-                f"<tr style=\"background:{'#eef7f5' if idx == best_idx else 'white'}\"><td><strong>{row['Model']}</strong>{best_chip}</td><td>{row['Accuracy']:.2f}</td><td>{row['Precision']:.2f}</td><td>{row['Recall']:.2f}</td><td>{row['F1']:.2f}</td><td>{row['ROC-AUC']:.2f}</td></tr>"
+                f"<tr style=\"background:{'#eef7f5' if idx == best_idx else 'white'}\"><td><strong>{row['Modelo']}</strong>{best_chip}</td><td>{row['Accuracy']:.2f}</td><td>{row['Precision']:.2f}</td><td>{row['Recall']:.2f}</td><td>{row['F1']:.2f}</td><td>{row['ROC-AUC']:.2f}</td></tr>"
             )
 
         html_table = """
         <div class="card">
             <div class="soft-table"><table>
-            <thead><tr><th>Model</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1</th><th>ROC-AUC</th></tr></thead>
+            <thead><tr><th>Modelo</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1</th><th>ROC-AUC</th></tr></thead>
             <tbody>
         """ + "".join(styled_rows) + "</tbody></table></div></div>"
 
         st.markdown(html_table, unsafe_allow_html=True)
     else:
-        st.info("No model metrics found. Run the training script first.")
+        st.info("No se encontraron métricas de modelos. Ejecuta primero el script de entrenamiento.")
 
-    st.markdown('<div class="card"><div class="subcard-title">Model Comparison by Key Metrics</div>', unsafe_allow_html=True)
+    st.markdown('<div class="card"><div class="subcard-title">Comparación de modelos por métricas clave</div>', unsafe_allow_html=True)
     if not model_table.empty:
-        melted = model_table.melt(id_vars="Model", value_vars=["ROC-AUC", "Recall", "F1"], var_name="Metric", value_name="Score")
+        melted = model_table.melt(id_vars="Modelo", value_vars=["ROC-AUC", "Recall", "F1"], var_name="Métrica", value_name="Valor")
         color_map = {"ROC-AUC": "#082b4c", "Recall": "#23b6ab", "F1": "#14a7db"}
-        fig = px.bar(melted, x="Model", y="Score", color="Metric", barmode="group", color_discrete_map=color_map)
+        fig = px.bar(melted, x="Modelo", y="Valor", color="Métrica", barmode="group", color_discrete_map=color_map)
         fig.update_layout(height=340, margin=dict(l=20, r=20, t=8, b=10), paper_bgcolor="white", plot_bgcolor="white")
-        fig.update_yaxes(range=[max(0.0, float(melted["Score"].min()) - 0.1), 1.0], gridcolor="#e9eef2")
+        fig.update_yaxes(range=[max(0.0, float(melted["Valor"].min()) - 0.1), 1.0], gridcolor="#e9eef2")
         st.plotly_chart(fig, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 
 
 def render_explainability() -> None:
-    st.markdown('<div class="section-title">Model Explainability</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">Explicabilidad del modelo</div>', unsafe_allow_html=True)
     left, right = st.columns(2, gap="large")
 
     with left:
-        st.markdown(f'<div class="card"><div class="subcard-title">Feature Importance ({kpis["best_model"] or "Best Model"})</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="card"><div class="subcard-title">Importancia de variables ({kpis["best_model"] or "Mejor modelo"})</div>', unsafe_allow_html=True)
         if not fi_df.empty and {"feature", "importance"}.issubset(fi_df.columns):
             top_df = fi_df.sort_values("importance", ascending=True).tail(8)
             fig = px.bar(top_df, x="importance", y="feature", orientation="h")
@@ -991,7 +992,7 @@ def render_explainability() -> None:
             fig.update_xaxes(gridcolor="#e9eef2")
             st.plotly_chart(fig, use_container_width=True)
         else:
-            st.info("Feature importance will appear after training and artifact export.")
+            st.info("La importancia de variables aparecerá después del entrenamiento y la exportación de artefactos.")
         st.markdown('</div>', unsafe_allow_html=True)
 
     with right:
@@ -1009,14 +1010,14 @@ def render_explainability() -> None:
                 y=roc_df["tpr"],
                 mode="lines",
                 line=dict(color="#082b4c", width=3),
-                name=str(kpis["best_model"] or "Model")
+                name=str(kpis["best_model"] or "Modelo")
             ))
             fig.add_trace(go.Scatter(
                 x=[0, 1],
                 y=[0, 1],
                 mode="lines",
                 line=dict(color="#cfd6de", width=2, dash="dash"),
-                name="Random Classifier"
+                name="Clasificador aleatorio"
             ))
             fig.update_layout(
                 height=360,
@@ -1024,17 +1025,17 @@ def render_explainability() -> None:
                 paper_bgcolor="white",
                 plot_bgcolor="white"
             )
-            fig.update_xaxes(title="False Positive Rate", gridcolor="#e9eef2")
-            fig.update_yaxes(title="True Positive Rate", gridcolor="#e9eef2")
+            fig.update_xaxes(title="Tasa de falsos positivos", gridcolor="#e9eef2")
+            fig.update_yaxes(title="Tasa de verdaderos positivos", gridcolor="#e9eef2")
             st.plotly_chart(fig, use_container_width=True)
         else:
-            st.info("ROC curve data not found. Add artifacts_ms/roc_curve_data.csv with columns fpr and tpr.")
+            st.info("No se encontraron datos de la curva ROC. Agrega artifacts_ms/roc_curve_data.csv con las columnas fpr y tpr.")
 
         st.markdown('</div>', unsafe_allow_html=True)
 
     left2, right2 = st.columns(2, gap="large")
     with left2:
-        st.markdown('<div class="card"><div class="subcard-title">Confusion Matrix</div>', unsafe_allow_html=True)
+        st.markdown('<div class="card"><div class="subcard-title">Matriz de confusión</div>', unsafe_allow_html=True)
         cm = None
         if isinstance(best_metrics, dict):
             cm = best_metrics.get("metrics", {}).get("ConfusionMatrix")
@@ -1045,10 +1046,10 @@ def render_explainability() -> None:
             tn, fp, fn, tp = 0, 0, 0, 0
         st.markdown(
             f'''<div class="matrix-grid">
-                <div class="matrix-cell m-green"><div class="matrix-value">{tn}</div><div>True Negative</div></div>
-                <div class="matrix-cell m-orange"><div class="matrix-value">{fp}</div><div>False Positive</div></div>
-                <div class="matrix-cell m-red"><div class="matrix-value">{fn}</div><div>False Negative</div></div>
-                <div class="matrix-cell m-teal"><div class="matrix-value">{tp}</div><div>True Positive</div></div>
+                <div class="matrix-cell m-green"><div class="matrix-value">{tn}</div><div>Verdadero negativo</div></div>
+                <div class="matrix-cell m-orange"><div class="matrix-value">{fp}</div><div>Falso positivo</div></div>
+                <div class="matrix-cell m-red"><div class="matrix-value">{fn}</div><div>Falso negativo</div></div>
+                <div class="matrix-cell m-teal"><div class="matrix-value">{tp}</div><div>Verdadero positivo</div></div>
             </div>''',
             unsafe_allow_html=True,
         )
@@ -1076,7 +1077,7 @@ def render_explainability() -> None:
 
             shap_html = f'''
             <div class="card">
-                <div class="subcard-title">SHAP Value Contributions</div>
+                <div class="subcard-title">Contribuciones de valores SHAP</div>
                 {"".join(shap_blocks)}
             </div>
             '''
@@ -1085,15 +1086,15 @@ def render_explainability() -> None:
             st.markdown(
                 '''
                 <div class="card">
-                    <div class="subcard-title">SHAP Value Contributions</div>
-                    <div style="color:#6d8097;">Contribution bars require feature importance output.</div>
+                    <div class="subcard-title">Contribuciones de valores SHAP</div>
+                    <div style="color:#6d8097;">Las barras de contribución requieren la salida de importancia de variables.</div>
                 </div>
                 ''',
                 unsafe_allow_html=True,
             )
 
 def render_prediction() -> None:
-    st.markdown('<div class="section-title">Patient Conversion Prediction</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">Predicción de conversión del paciente</div>', unsafe_allow_html=True)
     left, right = st.columns([1.05, 1.1], gap="large")
 
     predictor_candidates = [
@@ -1112,7 +1113,7 @@ def render_prediction() -> None:
 
         if predictor_candidates:
             with st.form("patient_prediction_form", clear_on_submit=False):
-                st.markdown('<div class="subcard-title">Patient Variables</div>', unsafe_allow_html=True)
+                st.markdown('<div class="subcard-title">Variables del paciente</div>', unsafe_allow_html=True)
                 cols = st.columns(2, gap="large")
 
                 for idx, col_name in enumerate(predictor_candidates):
@@ -1121,9 +1122,9 @@ def render_prediction() -> None:
                         form_values[col_name] = render_patient_field(col_name, series)
 
                 st.markdown('<div class="prediction-button-hook"></div>', unsafe_allow_html=True)
-                predict_clicked = st.form_submit_button("↗  Generate Prediction")
+                predict_clicked = st.form_submit_button("↗  Generar predicción")
         else:
-            st.info("No raw dataset available. Prediction form needs the Mongo dataset or raw preview.")
+            st.info("No hay dataset base disponible. El formulario de predicción necesita el dataset de Mongo o la vista previa raw.")
             predict_clicked = False
 
     if predict_clicked and model is not None and feature_columns and form_values:
@@ -1142,19 +1143,19 @@ def render_prediction() -> None:
             risk_text, risk_kind = risk_label(prob)
 
         except Exception as exc:
-            error_message = f"Prediction could not be generated: {exc}"
+            error_message = f"No se pudo generar la predicción: {exc}"
 
     with right:
         if error_message:
-            st.markdown('<div class="prediction-panel"><div class="subcard-title">Prediction Results</div></div>', unsafe_allow_html=True)
+            st.markdown('<div class="prediction-panel"><div class="subcard-title">Resultados de la predicción</div></div>', unsafe_allow_html=True)
             st.error(error_message)
 
         elif pred is None or prob is None:
             st.markdown(
                 '''<div class="prediction-panel">
-                    <div class="subcard-title">Prediction Results</div>
+                    <div class="subcard-title">Resultados de la predicción</div>
                     <div class="prediction-placeholder">
-                        Complete the patient variables and click <strong>Generate Prediction</strong> to display the estimated conversion risk.
+                        Completa las variables del paciente y haz clic en <strong>Generar predicción</strong> para mostrar el riesgo estimado de conversión.
                     </div>
                 </div>''',
                 unsafe_allow_html=True,
@@ -1162,65 +1163,65 @@ def render_prediction() -> None:
 
         else:
             prob_pct = prob * 100
-            pred_label = "Conversion" if pred == 1 else "Non-Conversion"
+            pred_label = "Conversión" if pred == 1 else "Sin conversión"
             st.markdown(
                 f'''<div class="prediction-panel">
-                    <div class="subcard-title">Prediction Results</div>
-                    <div style="color:#61758c;font-size:1.0rem;">Predicted Class</div>
+                    <div class="subcard-title">Resultados de la predicción</div>
+                    <div style="color:#61758c;font-size:1.0rem;">Clase predicha</div>
                     <div class="prediction-class">{pred_label}</div>
-                    <div style="color:#61758c;font-size:1.0rem;">Conversion Probability</div>
+                    <div style="color:#61758c;font-size:1.0rem;">Probabilidad de conversión</div>
                     <div class="prob-value">{prob_pct:.1f}%</div>
                     <div class="prob-track"><div class="prob-fill" style="width:{prob_pct:.1f}%"></div></div>
                     <div class="prediction-divider"></div>
-                    <div style="color:#61758c;font-size:1.0rem;">Risk Level</div>
+                    <div style="color:#61758c;font-size:1.0rem;">Nivel de riesgo</div>
                     <div class="risk-badge risk-{risk_kind}">&#9679;&nbsp;&nbsp;{risk_text}</div>
-                    <div class="disclaimer">&#9432;&nbsp;&nbsp;This prediction is for academic and decision-support purposes only and does not replace clinical judgment.</div>
+                    <div class="disclaimer">&#9432;&nbsp;&nbsp;Esta predicción es solo para fines académicos y de apoyo a la decisión, y no reemplaza el juicio clínico.</div>
                 </div>''',
                 unsafe_allow_html=True,
             )
 
 def render_insights() -> None:
-    st.markdown('<div class="section-title">Key Insights & Conclusions</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">Hallazgos clave y conclusiones</div>', unsafe_allow_html=True)
     top_feats = top_predictor_names(fi_df, 3)
-    best_model = str(kpis["best_model"] or "Best model")
+    best_model = str(kpis["best_model"] or "Mejor modelo")
     best_auc = f'{float(kpis["best_roc_auc"]):.2f}' if kpis["best_roc_auc"] is not None else "-"
     best_recall = f'{float(kpis["best_recall"]):.2f}' if kpis["best_recall"] is not None else "-"
 
     row1 = st.columns(2, gap="large")
     with row1[0]:
         st.markdown(
-            f'''<div class="card insight-card"><div class="insight-icon bg-mint">🏅</div><div><div class="insight-head">Best Performing Model</div><div class="insight-body">{best_model} achieved the strongest overall discrimination with ROC-AUC of {best_auc} and recall of {best_recall}.</div></div></div>''',
+            f'''<div class="card insight-card"><div class="insight-icon bg-mint">🏅</div><div><div class="insight-head">Modelo con mejor rendimiento</div><div class="insight-body">{best_model} logró la mejor capacidad discriminativa general, con un ROC-AUC de {best_auc} y un recall de {best_recall}.</div></div></div>''',
             unsafe_allow_html=True,
         )
     with row1[1]:
-        feat_text = ", ".join(top_feats) if top_feats else "Top predictors will appear after feature importance export."
+        feat_text = ", ".join(top_feats) if top_feats else "Los predictores principales aparecerán después de exportar la importancia de variables."
         st.markdown(
-            f'''<div class="card insight-card"><div class="insight-icon bg-blue">🧠</div><div><div class="insight-head">Most Influential Predictors</div><div class="insight-body">{feat_text}</div></div></div>''',
+            f'''<div class="card insight-card"><div class="insight-icon bg-blue">🧠</div><div><div class="insight-head">Predictores más influyentes</div><div class="insight-body">{feat_text}</div></div></div>''',
             unsafe_allow_html=True,
         )
 
     row2 = st.columns(2, gap="large")
     with row2[0]:
         st.markdown(
-            '''<div class="card insight-card"><div class="insight-icon bg-peach">📊</div><div><div class="insight-head">Model Prioritization</div><div class="insight-body">Recall was prioritized to reduce false negatives in clinical decision-support scenarios, while maintaining competitive ROC-AUC and F1.</div></div></div>''',
+            '''<div class="card insight-card"><div class="insight-icon bg-peach">📊</div><div><div class="insight-head">Priorización del modelo</div><div class="insight-body">Se priorizó el recall para reducir falsos negativos en escenarios de apoyo a la decisión clínica, manteniendo a la vez valores competitivos de ROC-AUC y F1.</div></div></div>''',
             unsafe_allow_html=True,
         )
     with row2[1]:
         st.markdown(
-            '''<div class="card insight-card"><div class="insight-icon bg-gray">❕</div><div><div class="insight-head">Overall Interpretation</div><div class="insight-body">The model shows promising discriminative performance on the available dataset. External validation on independent cohorts is still recommended before real clinical use.</div></div></div>''',
+            '''<div class="card insight-card"><div class="insight-icon bg-gray">❕</div><div><div class="insight-head">Interpretación general</div><div class="insight-body">El modelo muestra un rendimiento discriminativo prometedor sobre el dataset disponible. Aun así, se recomienda validación externa en cohortes independientes antes de un uso clínico real.</div></div></div>''',
             unsafe_allow_html=True,
         )
 
 
-if page == "Overview":
+if page == "Resumen":
     render_overview()
-elif page == "Dataset":
+elif page == "Datos":
     render_dataset()
-elif page == "Model Performance":
+elif page == "Rendimiento del Modelo":
     render_model_performance()
-elif page == "Explainability":
+elif page == "Explicabilidad":
     render_explainability()
-elif page == "Patient Prediction":
+elif page == "Predicción del Paciente":
     render_prediction()
-elif page == "Insights":
+elif page == "Hallazgos":
     render_insights()
