@@ -23,16 +23,10 @@ Fuentes consultadas para esta descripcion:
 
 ## Arquitectura
 
-```mermaid
-flowchart LR
-    A[CSV clinico] --> B[pipeline.py]
-    B --> C[(MongoDB: cis_raw)]
-    B --> D[(MongoDB: cis_model)]
-    D --> E[training_model.py]
-    E --> F[artifacts_ms]
-    B -. orquestacion .-> G[flow_prefect.py]
-    F --> H[app_ms_dashboard_test.py]
-```
+
+Diagrama detallado del pipeline:
+
+![Arquitectura del Pipeline](architecture_diagram.png)
 
 ### Componentes principales
 
